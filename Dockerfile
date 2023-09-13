@@ -13,15 +13,21 @@ RUN mkdir -p /opt/ngx
 
 COPY nginx-1.24.0.tar.gz /opt/ngx
 COPY ngx_http_geoip2_module-3.4.tar.gz /opt/ngx
+COPY libmaxminddb-1.3.2.tar.gz /opt/ngx
 
 WORKDIR /opt/ngx
 RUN tar xzvf nginx-1.24.0.tar.gz \
-  && tar xzvf ngx_http_geoip2_module-3.4.tar.gz
+  && tar xzvf ngx_http_geoip2_module-3.4.tar.gz \
+  && tar xzvf libmaxminddb-1.3.2.tar.gz
+
+WORKDIR /opt/ngx/libmaxminddb-1.3.2
+RUN ./configure && make && make install
+RUN echo /usr/local/lib >> /etc/ld.so.conf.d/local.conf
+RUN ldconfig
 
 WORKDIR /opt/ngx/nginx-1.24.0
-
-RUN ./configure --user=nginx \
---group=nginx --prefix=/usr/local/nginx --with-file-aio  --with-threads\
+RUN ./configure  \
+--prefix=/usr/local/nginx --with-file-aio  --with-threads \
 --with-http_ssl_module \
 --with-http_realip_module \
 --with-http_addition_module \ 
@@ -37,7 +43,7 @@ RUN ./configure --user=nginx \
 --with-http_degradation_module \
 --with-http_stub_status_module \
 --with-stream --with-stream_ssl_module --with-http_ssl_module --with-http_v2_module \
---add-dynamic-module==/opt/ngx/ngx_http_geoip2_module-3.4 \
+--add-module=/opt/ngx/ngx_http_geoip2_module-3.4 \
 && make && make install
 
 WORKDIR /opt/ngx
