@@ -14,7 +14,7 @@ RUN mkdir -p /opt/ngx
 COPY nginx-1.24.0.tar.gz /opt/ngx
 COPY ngx_http_geoip2_module-3.4.tar.gz /opt/ngx
 COPY libmaxminddb-1.3.2.tar.gz /opt/ngx
-COPY GeoLite2-Country.mmdb /usr/local/share/GeoIP
+COPY GeoLite2-Country.mmdb /usr/share/GeoIP
 
 WORKDIR /opt/ngx
 RUN tar xzvf nginx-1.24.0.tar.gz \
